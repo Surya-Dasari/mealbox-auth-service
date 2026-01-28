@@ -1,15 +1,13 @@
 pipeline {
     agent any
 
-    /************** SERVICE-SPECIFIC CONFIG (CHANGE ONLY THIS BLOCK) **************/
     environment {
+        /************** SERVICE-SPECIFIC CONFIG (CHANGE ONLY THIS BLOCK) **************/
         SERVICE_NAME = "auth-service"
         IMAGE_NAME   = "suryadasari31/mealbox-auth-service"
         VALUES_FILE  = "values-auth-service.yaml"
-    }
-    /*******************************************************************************/
+        /*******************************************************************************/
 
-    environment {
         IMAGE_TAG  = "${BUILD_NUMBER}"
 
         NEXUS_URL  = "http://172.25.224.1:8082"
@@ -131,7 +129,6 @@ docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     sh '''
 set -e
 
-echo "Cloning MealBox platform repo (Helm charts)..."
 rm -rf mealbox-platform || true
 git clone https://github.com/Surya-Dasari/mealbox-platform.git
 
@@ -141,7 +138,6 @@ git clone https://github.com/Surya-Dasari/mealbox-platform.git
 
 /usr/bin/oc project ${OC_PROJECT}
 
-echo "Deploying ${SERVICE_NAME} using Helm..."
 /usr/local/bin/helm upgrade --install ${SERVICE_NAME} \
   mealbox-platform/helm/mealbox-backend-service \
   -f mealbox-platform/helm/mealbox-backend-service/values/${VALUES_FILE} \
